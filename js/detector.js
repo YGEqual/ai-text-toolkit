@@ -149,5 +149,19 @@
     };
   }
 
-  global.Detector = { detect, detectLang };
+  // 调用本地 RoBERTa 检测服务（模型增强档）
+  async function detectModel(text, endpoint) {
+    const base = (endpoint || 'http://127.0.0.1:8000').replace(/\/+$/, '');
+    const resp = await fetch(base + '/detect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (!resp.ok) throw new Error('服务返回 ' + resp.status);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    return data; // { ai_prob, score, chunks, chunk_probs, model }
+  }
+
+  global.Detector = { detect, detectModel, detectLang };
 })(window);

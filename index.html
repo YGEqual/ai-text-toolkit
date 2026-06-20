@@ -32,6 +32,10 @@
             <span class="muted" id="detect-count">0 字</span>
           </div>
           <textarea id="detect-input" placeholder="粘贴中文或英文文案，自动识别语言并估算 AI 生成率…"></textarea>
+          <div class="opt-row model-opt">
+            <label><input type="checkbox" id="detect-useModel" /> 本地模型增强（RoBERTa，需启动服务）</label>
+            <input type="text" id="detect-endpoint" value="http://127.0.0.1:8000" title="本地检测服务地址" />
+          </div>
           <div class="actions">
             <button class="btn primary" id="btn-detect">开始检测</button>
             <button class="btn ghost" id="btn-detect-sample">填入示例</button>

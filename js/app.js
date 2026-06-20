@@ -22,24 +22,50 @@
   $('#btn-detect-sample').onclick = () => { detectInput.value = SAMPLE_DETECT; detectInput.dispatchEvent(new Event('input')); };
   $('#btn-detect-clear').onclick = () => { detectInput.value = ''; detectInput.dispatchEvent(new Event('input')); $('#detect-result').innerHTML = '<p class="muted">检测结果将显示在这里。</p>'; };
 
-  $('#btn-detect').onclick = () => {
+  function gradeOf(score) {
+    if (score < 30) return { verdict: '很可能为人工撰写', level: 'ok' };
+    if (score < 55) return { verdict: '疑似部分 AI 参与/润色', level: 'warn' };
+    if (score < 75) return { verdict: '较可能为 AI 生成', level: 'warn' };
+    return { verdict: '很可能为 AI 生成', level: 'danger' };
+  }
+
+  $('#btn-detect').onclick = async () => {
     const text = detectInput.value.trim();
     if (!text) { $('#detect-result').innerHTML = '<p class="muted">请输入文案。</p>'; return; }
-    const r = window.Detector.detect(text);
-    renderDetect(r);
+    const base = window.Detector.detect(text); // 启发式：提供维度分解与命中词
+    if (!$('#detect-useModel').checked) { renderDetect(base); return; }
+
+    const btn = $('#btn-detect'), label = btn.textContent;
+    btn.disabled = true; btn.textContent = '模型检测中…';
+    try {
+      const m = await window.Detector.detectModel(text, $('#detect-endpoint').value);
+      renderDetect(Object.assign({}, base, gradeOf(m.score), {
+        score: m.score, lowConf: false,
+        source: '本地模型 · ' + (m.model || 'RoBERTa') + `（${m.chunks} 块）`,
+      }));
+    } catch (e) {
+      base.notice = '⚠ 本地模型服务不可达（' + e.message + '），已回退到内置启发式算法。';
+      renderDetect(base);
+    } finally {
+      btn.disabled = false; btn.textContent = label;
+    }
   };
 
   function renderDetect(r) {
     const colorVar = { ok: 'var(--ok)', warn: 'var(--warn)', danger: 'var(--danger)' }[r.level];
-    let html = `
+    let html = '';
+    if (r.notice) html += `<p class="hint" style="color:var(--warn)">${r.notice}</p>`;
+    html += `
       <div class="gauge-wrap">
         <div class="gauge" style="--val:${r.score}; --col:${colorVar}">
           <span class="gauge-num">${r.score}<small>%</small></span>
         </div>
         <div class="verdict" style="color:${colorVar}">${r.verdict}</div>
+        <div class="muted">来源：${r.source || '内置启发式算法'}</div>
         <div class="muted">语言：${r.lang === 'zh' ? '中文' : '英文'} · ${r.charCount} 字</div>
         ${r.lowConf ? '<div class="hint">⚠ 文本较短，结果置信度低，建议 ≥ 一段文字。</div>' : ''}
       </div>`;
+    if (r.source) html += `<div class="muted" style="margin:4px 0 6px">下方为启发式特征分解，供参考：</div>`;
     html += r.metrics.map(m => `
       <div class="metric">
         <div class="metric-top"><span>${m.name}</span><span class="muted">${m.detail}</span></div>

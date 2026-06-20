@@ -120,6 +120,8 @@ textarea:focus { border-color: var(--brand); background: #fff; }
 select, input[type="number"], input[type="color"] {
   border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-size: 13px; font-family: inherit;
 }
+.model-opt { margin-top: 10px; }
+.model-opt input[type="text"] { flex: 1; min-width: 150px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-size: 12px; color: var(--muted); }
 .changelog { margin-top: 12px; font-size: 12px; color: var(--muted); max-height: 120px; overflow:auto; }
 .changelog b { color: var(--ink); }
 

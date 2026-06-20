@@ -50,12 +50,20 @@ ai-text-toolkit/
 └── README.md
 ```
 
-## 可选增强（本地开源模型）
+## 本地模型增强（已集成）
 
-当前检测/去 AI 化基于轻量启发式算法，开箱即用、零下载。若需更强能力，可接入
-[transformers.js](https://github.com/huggingface/transformers.js) 在浏览器本地加载
-开源模型（如困惑度模型、中文 paraphrase 模型）。`detector.js` / `humanizer.js` 已封装为
-独立模块，替换/叠加实现即可，不影响主流程与离线特性（模型权重首次需下载一次后缓存）。
+检测默认用轻量启发式算法，开箱即用、零下载。若需更准，可启动 `server/` 下的本地推理服务，
+用开源 **RoBERTa 中文检测器**（`Hello-SimpleAI/chatgpt-detector-roberta-chinese`，HC3-Chinese）做模型级检测：
+
+```bash
+cd server
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app:app --host 127.0.0.1 --port 8000
+```
+
+然后在「AI 率检测」勾选 **本地模型增强** 即可。服务不可达时自动回退到启发式算法。
+详见 [`server/README.md`](server/README.md)。模型 ~102M 参数，CPU 即可运行，首次启动下载约 400MB 权重后离线缓存。
 
 ## 第三方开源依赖
 - [pdf-lib](https://github.com/Hopding/pdf-lib) (MIT)
