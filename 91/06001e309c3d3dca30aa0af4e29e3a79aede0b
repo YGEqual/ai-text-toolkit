@@ -1,0 +1,36 @@
+server/requirements.txt
+  s_cd30161b3460bf::t_d45d062e7dedc1 1-4
+server/README.md
+  s_cd30161b3460bf::t_c29d46beeba43f 1-41
+js/detector.js
+  s_cd30161b3460bf::t_a33593a8ef41fa 152-166
+.gitignore
+  s_cd30161b3460bf::t_69036a69a82e49 1-3
+js/app.js
+  s_cd30161b3460bf::t_f09c0bf2e56148 56-58,64,68
+  s_cd30161b3460bf::t_9b328bd077aa44 25-32,35-51
+server/app.py
+  s_cd30161b3460bf::t_76d59d9c233200 1-108
+css/style.css
+  s_cd30161b3460bf::t_cfac052c52bb29 123-124
+README.md
+  s_cd30161b3460bf::t_3e2a6ea6b491a0 53,55-66
+index.html
+  s_cd30161b3460bf::t_7c7bdb4f187cb9 35-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "9106001e309c3d3dca30aa0af4e29e3a79aede0b",
+  "prompts": {},
+  "sessions": {
+    "s_cd30161b3460bf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5caceb4c-d359-415c-8ce4-d07104c15179",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "yiguo.wang <yiguo.wang@ly.com>"
+    }
+  }
+}
