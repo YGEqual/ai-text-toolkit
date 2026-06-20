@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>文本 AI 工具箱 · AI 率检测 / 去 AI 化 / PDF 页码</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">✦</span>
+      <div>
+        <h1>文本 AI 工具箱</h1>
+        <p class="subtitle">离线 · 纯本地 · 开箱即用</p>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="detect">AI 率检测</button>
+      <button class="tab" data-tab="humanize">去 AI 化</button>
+      <button class="tab" data-tab="pdf">PDF 加页码</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ AI 率检测 ============ -->
+    <section class="panel active" id="panel-detect">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <h2>待检测文案</h2>
+            <span class="muted" id="detect-count">0 字</span>
+          </div>
+          <textarea id="detect-input" placeholder="粘贴中文或英文文案，自动识别语言并估算 AI 生成率…"></textarea>
+          <div class="actions">
+            <button class="btn primary" id="btn-detect">开始检测</button>
+            <button class="btn ghost" id="btn-detect-sample">填入示例</button>
+            <button class="btn ghost" id="btn-detect-clear">清空</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>检测结果</h2></div>
+          <div id="detect-result" class="result-empty">
+            <p class="muted">检测结果将显示在这里。</p>
+            <p class="hint">本工具使用启发式算法（困惑度近似 + 突发性 + 词汇多样性 + AI 套话命中），结果为概率估计，<b>仅供参考</b>，不构成绝对判定。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 去 AI 化 ============ -->
+    <section class="panel" id="panel-humanize">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <h2>原始文案</h2>
+            <span class="muted" id="hz-count">0 字</span>
+          </div>
+          <textarea id="hz-input" placeholder="粘贴 AI 生成的文案，自动降低 AI 痕迹…"></textarea>
+          <div class="opt-row">
+            <label><input type="checkbox" id="hz-removeCliche" checked /> 去除套话/过渡词</label>
+            <label><input type="checkbox" id="hz-dash" checked /> 破折号口语化</label>
+            <label><input type="checkbox" id="hz-burst" checked /> 句长起伏调整</label>
+            <label><input type="checkbox" id="hz-synonym" checked /> 同义词替换</label>
+          </div>
+          <div class="opt-row">
+            <label>改写强度
+              <select id="hz-strength">
+                <option value="light">轻度</option>
+                <option value="medium" selected>中度</option>
+                <option value="strong">强度</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="btn-humanize">去 AI 化</button>
+            <button class="btn ghost" id="btn-hz-sample">填入示例</button>
+            <button class="btn ghost" id="btn-hz-clear">清空</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>改写结果</h2>
+            <button class="btn mini" id="btn-hz-copy">复制</button>
+          </div>
+          <textarea id="hz-output" placeholder="改写后的文案将显示在这里…"></textarea>
+          <div id="hz-report" class="changelog"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PDF 加页码 ============ -->
+    <section class="panel" id="panel-pdf">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h2>PDF 文件与设置</h2></div>
+
+          <label class="filedrop" id="pdf-drop">
+            <input type="file" id="pdf-file" accept="application/pdf" hidden />
+            <span id="pdf-filename">点击或拖入 PDF 文件</span>
+          </label>
+
+          <fieldset class="settings">
+            <legend>页码位置</legend>
+            <label><input type="checkbox" id="pos-bc" checked /> 下方居中</label>
+            <label><input type="checkbox" id="pos-br" /> 右下角</label>
+            <label><input type="checkbox" id="pos-bl" /> 左下角</label>
+          </fieldset>
+
+          <fieldset class="settings">
+            <legend>页码格式与顺序</legend>
+            <label>格式
+              <select id="pdf-format">
+                <option value="num">1</option>
+                <option value="slash">1 / N</option>
+                <option value="dash">- 1 -</option>
+                <option value="en">Page 1 of N</option>
+                <option value="zh" data-needfont="1">第 1 页</option>
+                <option value="zhfull" data-needfont="1">第 1 页 / 共 N 页</option>
+              </select>
+            </label>
+            <label>顺序
+              <select id="pdf-order">
+                <option value="asc">正序（1→N）</option>
+                <option value="desc">倒序（N→1）</option>
+              </select>
+            </label>
+            <label>起始页码
+              <input type="number" id="pdf-start" value="1" min="0" style="width:80px" />
+            </label>
+            <label>从第几页开始标
+              <input type="number" id="pdf-from" value="1" min="1" style="width:80px" />
+            </label>
+            <label>到第几页结束（0=最后）
+              <input type="number" id="pdf-to" value="0" min="0" style="width:80px" />
+            </label>
+          </fieldset>
+
+          <fieldset class="settings">
+            <legend>样式</legend>
+            <label>字号 <input type="number" id="pdf-size" value="11" min="6" max="40" style="width:70px" /></label>
+            <label>距边距(pt) <input type="number" id="pdf-margin" value="24" min="0" max="120" style="width:70px" /></label>
+            <label>颜色 <input type="color" id="pdf-color" value="#333333" /></label>
+            <label class="zh-font-row" hidden>中文字体(.ttf/.otf)
+              <input type="file" id="pdf-font" accept=".ttf,.otf" hidden />
+              <button type="button" class="btn mini" id="btn-pick-font">选择字体</button>
+              <span class="muted" id="pdf-fontname">中文格式需要字体</span>
+            </label>
+          </fieldset>
+
+          <div class="actions">
+            <button class="btn primary" id="btn-pdf-run">生成并下载</button>
+          </div>
+          <div id="pdf-status" class="status"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>说明</h2></div>
+          <ul class="help">
+            <li>完全在你的浏览器本地处理，<b>文件不会上传</b>到任何服务器。</li>
+            <li>可同时勾选多个位置（如下方居中 + 右下角）。</li>
+            <li><b>起始页码</b>：第一张被标注的页显示的数字（如设 0 可实现封面不计）。</li>
+            <li><b>顺序倒序</b>：适用于从后往前的排版需求。</li>
+            <li>选择"第 1 页"等中文格式时，需本地选择一个中文字体文件（仍然离线）。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>纯前端离线应用 · 依赖开源库 pdf-lib / fontkit</span>
+  </footer>
+
+  <script src="js/lib/pdf-lib.min.js"></script>
+  <script src="js/lib/fontkit.umd.min.js"></script>
+  <script src="js/detector.js"></script>
+  <script src="js/humanizer.js"></script>
+  <script src="js/pdf-pager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
