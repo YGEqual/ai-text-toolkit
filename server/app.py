@@ -16,8 +16,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-# 可用环境变量覆盖；也可换成英文模型 Hello-SimpleAI/chatgpt-detector-roberta
-MODEL_NAME = os.environ.get("DETECTOR_MODEL", "Hello-SimpleAI/chatgpt-detector-roberta-chinese")
+# 模型来源优先级：环境变量 DETECTOR_MODEL > 本地 models/ 目录 > HuggingFace 在线名称
+# 把模型放自己的 CDN 时：部署机先跑 fetch_from_cdn.sh 拉到本地目录，本服务即从本地加载。
+_LOCAL_DIR = os.path.join(os.path.dirname(__file__), "models", "chatgpt-detector-roberta-chinese")
+_DEFAULT = _LOCAL_DIR if os.path.exists(os.path.join(_LOCAL_DIR, "config.json")) \
+    else "Hello-SimpleAI/chatgpt-detector-roberta-chinese"
+MODEL_NAME = os.environ.get("DETECTOR_MODEL", _DEFAULT)
 MAX_TOKENS = 512
 MAX_CHARS_PER_CHUNK = 480  # 给特殊 token 留余量
 

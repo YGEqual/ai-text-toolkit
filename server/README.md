@@ -21,6 +21,31 @@ uvicorn app:app --host 127.0.0.1 --port 8000
 > 如需国内加速，启动前设置 `export HF_ENDPOINT=https://hf-mirror.com`。
 > 纯 CPU 安装更省体积：`pip install torch --index-url https://download.pytorch.org/whl/cpu`
 
+## 把模型托管到自己的 CDN（加速 / 离线部署）
+
+模型由 6 个文件组成，平铺上传即可，无需保留目录层级：
+`config.json` `special_tokens_map.json` `tokenizer.json` `tokenizer_config.json` `vocab.txt` `pytorch_model.bin`（约 390MB）
+
+1. 本地下载全部文件（脚本默认走 hf-mirror 镜像）：
+   ```bash
+   bash download_model.sh    # 落到 server/models/chatgpt-detector-roberta-chinese/
+   ```
+2. 把该目录下 6 个文件上传到你的 CDN / 对象存储（阿里云 OSS、腾讯云 COS、七牛等），
+   得到一个基地址，例如 `https://your-cdn.com/models/roberta-zh/`，各文件直接平铺其下
+   （可直接访问 `.../roberta-zh/pytorch_model.bin`）。
+3. 部署机上从 CDN 拉取到本地：
+   ```bash
+   export CDN_BASE=https://your-cdn.com/models/roberta-zh
+   bash fetch_from_cdn.sh
+   ```
+4. 启动服务，自动优先加载本地 `models/` 目录（无需联网 HuggingFace）：
+   ```bash
+   uvicorn app:app --host 127.0.0.1 --port 8000
+   ```
+
+> 加载优先级：环境变量 `DETECTOR_MODEL` > 本地 `models/` 目录 > HuggingFace 在线名称。
+> `pytorch_model.bin` 上传 CDN 时确保以二进制原样存储，不要被网关压缩 / 改写。
+
 ## 接口
 
 - `GET /health` → `{status, model, device, id2label}`
