@@ -1,0 +1,27 @@
+server/app.py
+  s_cd30161b3460bf::t_3b07a9c5a501cd 19-24
+server/download_model.sh
+  s_cd30161b3460bf::t_5bdcf589a299d7 1-19
+server/fetch_from_cdn.sh
+  s_cd30161b3460bf::t_f0c752c1211e63 1-16
+.gitignore
+  s_cd30161b3460bf::t_f233be3729e0b5 2
+server/README.md
+  s_cd30161b3460bf::t_38c3c3bd0075c3 24-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "5348a5566f2e40bc778924735ede9e3b5a720f20",
+  "prompts": {},
+  "sessions": {
+    "s_cd30161b3460bf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5caceb4c-d359-415c-8ce4-d07104c15179",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "yiguo.wang <yiguo.wang@ly.com>"
+    }
+  }
+}
